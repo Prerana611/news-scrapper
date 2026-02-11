@@ -1,0 +1,31 @@
+# News Scraping & AI Summarization System
+# Python 3.10+
+
+# RSS & HTTP
+feedparser==6.0.11
+requests==2.31.0
+urllib3>=2.0.0
+
+# Article extraction (full content)
+newspaper3k==0.2.8
+beautifulsoup4==4.12.3
+
+# AI summarization (1.55+ fixes httpx 'proxies' compatibility)
+openai>=1.55.0
+
+# Database (supabase 2.10+ for httpx 0.26 / proxy compatibility)
+supabase>=2.10.0
+httpx>=0.26.0,<0.29
+
+# Scheduling (optional; can use system cron instead)
+schedule==1.2.1
+APScheduler==3.10.4
+
+# Environment & logging
+python-dotenv==1.0.1
+
+# Dashboard (optional)
+flask>=3.0.0
+
+# Optional: Playwright for JS-heavy sites (install separately: playwright install)
+# playwright==1.41.0

@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>News Dashboard</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: #fff;
+      color: #1a1a1a;
+      line-height: 1.5;
+    }
+    .container { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem 2rem; }
+    .page-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 0; padding-top: 1.5rem; }
+
+    /* BBC-style nav: horizontal bar, active = bold + underline */
+    .nav-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0 1.5rem;
+      margin: 1rem 0 1.5rem;
+      padding: 0 0 0.5rem;
+      border-bottom: 1px solid #e5e5e5;
+    }
+    .nav-bar a {
+      font-size: 1rem;
+      font-weight: 400;
+      color: #1a1a1a;
+      text-decoration: none;
+      padding-bottom: 0.5rem;
+      margin-bottom: -1px;
+      border-bottom: 3px solid transparent;
+      transition: font-weight 0.15s, border-color 0.15s;
+    }
+    .nav-bar a:hover {
+      color: #1a1a1a;
+      font-weight: 600;
+    }
+    .nav-bar a.active {
+      font-weight: 700;
+      border-bottom-color: #1a1a1a;
+      color: #1a1a1a;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+    @media (max-width: 1024px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid #e5e5e5;
+      transition: box-shadow 0.2s;
+    }
+    .card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .card-link {
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .card-image-wrap {
+      width: 100%;
+      aspect-ratio: 16/10;
+      background: #e8e8e8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .card-image-placeholder {
+      width: 100%; height: 100%;
+      background: linear-gradient(135deg, #e8e8e8 0%, #d8d8d8 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-image-placeholder svg { width: 48px; height: 48px; opacity: 0.4; }
+    .card-body { padding: 1.25rem; display: flex; flex-direction: column; flex: 1; }
+    .card-headline {
+      font-size: 1.1rem; font-weight: 700; line-height: 1.35; margin: 0 0 0.6rem; color: #1a1a1a;
+    }
+    .card-link:hover .card-headline { text-decoration: underline; }
+    .card-desc {
+      font-size: 0.9rem; color: #4a4a4a; margin: 0 0 0.75rem; line-height: 1.45;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+      min-height: 3.6em; white-space: pre-line;
+    }
+    .card-meta {
+      font-size: 0.8rem; color: #888; margin-top: auto; padding-top: 0.5rem; border-top: 1px solid #eee;
+    }
+    .card-meta span:first-child::after { content: " | "; margin: 0 0.25rem; color: #bbb; }
+    .empty { text-align: center; color: #666; padding: 4rem 1rem; grid-column: 1 / -1; }
+    .empty code { background: #f0f0f0; padding: 0.2rem 0.5rem; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 class="page-title">News Dashboard</h1>
+
+    <nav class="nav-bar" aria-label="Category">
+      {% for tab in tab_options %}
+      {% if tab == 'All' %}
+      <a href="{{ url_for('index') }}" class="{{ 'active' if not current_category else '' }}" aria-current="{{ 'page' if not current_category else 'false' }}">All</a>
+      {% else %}
+      <a href="{{ url_for('index', category=tab) }}" class="{{ 'active' if current_category == tab else '' }}" aria-current="{{ 'page' if current_category == tab else 'false' }}">{{ tab }}</a>
+      {% endif %}
+      {% endfor %}
+    </nav>
+
+    <div class="grid">
+      {% if articles %}
+        {% for a in articles %}
+        <article class="card">
+          <a class="card-link" href="{{ a.article_url or '#' }}" target="_blank" rel="noopener">
+            <div class="card-image-wrap">
+              {% if a.image_url %}
+              <img src="{{ a.image_url }}" alt="">
+              {% else %}
+              <div class="card-image-placeholder">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h2a2 2 0 012-2h6a2 2 0 012 2h2a2 2 0 012 2v10a2 2 0 01-2 2z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 7h6m0 10v-3m-3 3v.01M12 17v.01M12 14a1 1 0 100-2 1 1 0 000 2z" />
+                </svg>
+              </div>
+              {% endif %}
+            </div>
+            <div class="card-body">
+              <h2 class="card-headline">{{ a.title or 'Untitled' }}</h2>
+              <p class="card-desc">{{ a.display_summary or 'Open the article to read more.' }}</p>
+              <div class="card-meta">
+                <span>{{ a.time_ago or '—' }}</span>
+                <span>{{ a.source_name or 'Unknown' }}</span>
+              </div>
+            </div>
+          </a>
+        </article>
+        {% endfor %}
+      {% else %}
+        <div class="empty">No articles yet. Run the scraper: <code>python -m src.main</code></div>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>
