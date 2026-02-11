@@ -158,7 +158,10 @@ def scrape_bbc_section(section_url: str, category: str) -> list[dict[str, Any]]:
                 article_links.append(href)
 
         # Extract article metadata from the listing page
-        for url in article_links[:50]:  # Limit to avoid too many requests
+        # Try more URLs but cap entries to ~100 to keep runtime reasonable
+        for url in article_links[:150]:
+            if len(entries) >= 100:
+                break
             try:
                 # Try to find title and image from the listing card
                 link_elem = soup.find("a", href=url.replace("https://www.bbc.com", ""))
@@ -227,6 +230,10 @@ def scrape_bbc_article_page(article_url: str) -> tuple[Optional[str], Optional[s
         # BBC uses <article> or <main> with <div data-component="text-block">
         article = soup.find("article") or soup.find("main")
         if article:
+            # Remove unwanted elements that might pollute text
+            for unwanted in article.select("script, style, noscript, time, .visually-hidden, figcaption, [data-component='image-block'], [data-component='video-block']"):
+                unwanted.decompose()
+                
             for block in article.find_all("div", {"data-component": "text-block"}):
                 text = block.get_text(separator=" ", strip=True)
                 if text and len(text) > 20:

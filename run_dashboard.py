@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, abort
 from src.db.article_repository import ArticleRepository
 
 app = Flask(__name__)
@@ -72,6 +72,24 @@ def index():
         tab_options=TAB_OPTIONS,
         current_category=category_param,
     )
+
+
+@app.route("/article/<article_id>")
+def article_detail(article_id: str):
+    """Detail view: show full article on our site; title links to original URL."""
+    repo = ArticleRepository()
+    article = repo.get_article_by_id(article_id)
+    if not article:
+        abort(404)
+
+    article["time_ago"] = _time_ago(article.get("published_at") or article.get("created_at"))
+    summary = (article.get("summary") or "").strip()
+    full = (article.get("full_content") or "").strip()
+    if not full and summary:
+        full = summary
+    article["display_full"] = full
+
+    return render_template("article_detail.html", article=article)
 
 
 if __name__ == "__main__":

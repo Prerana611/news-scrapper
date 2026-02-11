@@ -10,8 +10,9 @@ urllib3>=2.0.0
 newspaper3k==0.2.8
 beautifulsoup4==4.12.3
 
-# AI summarization (1.55+ fixes httpx 'proxies' compatibility)
+# AI summarization (OpenAI + Groq client)
 openai>=1.55.0
+groq>=0.9.0
 
 # Database (supabase 2.10+ for httpx 0.26 / proxy compatibility)
 supabase>=2.10.0

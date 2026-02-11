@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ article.title or 'Article' }} - News Dashboard</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: #fff;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+    .container { max-width: 860px; margin: 0 auto; padding: 1.5rem 1.5rem 3rem; }
+    a { color: #0066cc; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .back-link { font-size: 0.9rem; margin-bottom: 1rem; display: inline-block; }
+    .headline {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin: 0.5rem 0 0.75rem;
+    }
+    .meta {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 1.25rem;
+    }
+    .meta span:first-child::after { content: " | "; margin: 0 0.25rem; color: #bbb; }
+    .hero-image {
+      margin-bottom: 1.5rem;
+    }
+    .hero-image img {
+      width: 100%;
+      max-height: 420px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    .content {
+      font-size: 1rem;
+      color: #222;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a class="back-link" href="{{ url_for('index') }}">&larr; Back to dashboard</a>
+
+    {% if article.article_url %}
+    <!-- Clicking the title opens the original article on the publisher site -->
+    <h1 class="headline">
+      <a href="{{ article.article_url }}" target="_blank" rel="noopener">
+        {{ article.title or 'Untitled' }}
+      </a>
+    </h1>
+    {% else %}
+    <h1 class="headline">{{ article.title or 'Untitled' }}</h1>
+    {% endif %}
+
+    <div class="meta">
+      <span>{{ article.time_ago or '—' }}</span>
+      <span>{{ article.source_name or 'Unknown source' }}</span>
+    </div>
+
+    {% if article.image_url %}
+    <div class="hero-image">
+      <img src="{{ article.image_url }}" alt="">
+    </div>
+    {% endif %}
+
+    <div class="content">
+      {{ article.display_full or 'Full content not available for this article.' }}
+    </div>
+  </div>
+</body>
+</html>
+

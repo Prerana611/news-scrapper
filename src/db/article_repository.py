@@ -138,3 +138,21 @@ class ArticleRepository:
         except Exception as e:
             logger.warning("article_exists_by_url failed: %s", e)
             return False
+
+    def get_article_by_id(self, article_id: str) -> dict[str, Any] | None:
+        """Fetch a single article by its ID for detail view."""
+        try:
+            result = (
+                self.client.table("articles")
+                .select(
+                    "id, title, summary, full_content, source_name, article_url, published_at, created_at, image_url"
+                )
+                .eq("id", article_id)
+                .limit(1)
+                .execute()
+            )
+            row = (result.data or [None])[0]
+            return dict(row) if row else None
+        except Exception as e:
+            logger.exception("Get article by id failed: %s", e)
+            return None

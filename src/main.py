@@ -24,7 +24,7 @@ def main() -> None:
     """Run the daily scrape + summarize + store job once."""
     logger.info("Starting daily news job")
     try:
-        run_daily_job(skip_existing_urls=True, max_articles_per_run=100)
+        run_daily_job(skip_existing_urls=True, max_articles_per_source=25)
     except Exception as e:
         logger.exception("Daily job failed: %s", e)
         sys.exit(1)

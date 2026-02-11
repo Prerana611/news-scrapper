@@ -27,6 +27,10 @@ SUPABASE_SERVICE_KEY = _raw_key
 # OpenAI
 OPENAI_API_KEY = get_env("OPENAI_API_KEY", "")
 
+# Groq (optional: used for summarization if present)
+GROQ_API_KEY = get_env("GROQ_API_KEY", "")
+GROQ_MODEL = get_env("GROQ_MODEL", "llama-3.1-8b-instant")
+
 # Scheduler
 DAILY_RUN_HOUR = int(get_env("DAILY_RUN_HOUR", "9"))
 DAILY_RUN_MINUTE = int(get_env("DAILY_RUN_MINUTE", "0"))
